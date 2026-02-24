@@ -1,2 +1,1095 @@
 # life-upgrade-hub
 A modern self-improvement platform with tools for productivity, glow up, mindset, and life improvement.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Upgrade Hub — Upgrade Your Life. One Tool at a Time.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070711;
+    --surface: rgba(255,255,255,0.04);
+    --surface-hover: rgba(255,255,255,0.08);
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(139,92,246,0.5);
+    --purple: #8b5cf6;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+    --pink: #ec4899;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --grad: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    --grad2: linear-gradient(135deg, #8b5cf6, #ec4899);
+    --glow: 0 0 40px rgba(139,92,246,0.3);
+    --radius: 20px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+
+  /* CANVAS */
+  #particle-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ORBS */
+  .orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+    animation: orb-drift 12s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 500px; height: 500px; background: rgba(139,92,246,0.15); top: -150px; left: -150px; }
+  .orb-2 { width: 400px; height: 400px; background: rgba(59,130,246,0.12); bottom: 20%; right: -100px; animation-delay: -6s; }
+  .orb-3 { width: 300px; height: 300px; background: rgba(236,72,153,0.08); top: 50%; left: 40%; animation-delay: -3s; }
+  @keyframes orb-drift {
+    from { transform: translate(0,0) scale(1); }
+    to { transform: translate(30px, 40px) scale(1.1); }
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 40px;
+    background: rgba(7,7,17,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 800;
+    background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    padding: 10px 24px; border-radius: 50px;
+    background: var(--grad); color: #fff;
+    border: none; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 0.85rem;
+    cursor: pointer; transition: all 0.3s; text-decoration: none;
+    display: inline-block;
+  }
+  .nav-cta:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+
+  /* HERO */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 40px 80px; text-align: center; z-index: 1;
+  }
+  .hero-content { max-width: 820px; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 20px; border-radius: 50px;
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.3);
+    font-size: 0.8rem; color: #a78bfa; margin-bottom: 32px;
+    animation: fade-up 0.8s ease both;
+  }
+  .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #a78bfa; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    font-weight: 800; line-height: 1.1;
+    margin-bottom: 24px;
+    animation: fade-up 0.8s 0.1s ease both;
+  }
+  .hero h1 span {
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted); max-width: 600px; margin: 0 auto 40px;
+    animation: fade-up 0.8s 0.2s ease both;
+  }
+  .hero-btns {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    animation: fade-up 0.8s 0.3s ease both;
+  }
+  .btn-primary {
+    padding: 16px 36px; border-radius: 50px;
+    background: var(--grad); color: #fff;
+    border: none; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1rem; cursor: pointer;
+    transition: all 0.3s; position: relative; overflow: hidden;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(139,92,246,0.4); }
+  .btn-secondary {
+    padding: 16px 36px; border-radius: 50px;
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border); font-family: 'Syne', sans-serif;
+    font-weight: 600; font-size: 1rem; cursor: pointer;
+    transition: all 0.3s; text-decoration: none; display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--purple); background: rgba(139,92,246,0.1); transform: translateY(-3px); }
+  @keyframes fade-up { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: translateY(0); } }
+
+  /* SECTION */
+  section { position: relative; z-index: 1; }
+  .section-header { text-align: center; margin-bottom: 60px; }
+  .section-label {
+    display: inline-block; font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 3px; color: var(--purple);
+    margin-bottom: 12px;
+  }
+  .section-header h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; }
+  .section-header p { color: var(--muted); max-width: 500px; margin: 0 auto; }
+
+  /* TOOLS GRID */
+  #tools { padding: 100px 40px; }
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px; max-width: 1200px; margin: 0 auto;
+  }
+  .tool-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    backdrop-filter: blur(20px);
+    transition: all 0.35s cubic-bezier(.22,.68,0,1.2);
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .tool-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--grad); opacity: 0;
+    transition: opacity 0.3s; z-index: 0; border-radius: inherit;
+  }
+  .tool-card:hover { border-color: var(--border-hover); transform: translateY(-6px); box-shadow: var(--glow); }
+  .tool-card > * { position: relative; z-index: 1; }
+  .tool-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 20px;
+  }
+  .tool-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .tool-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5; }
+  .tool-open-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 0.85rem; color: var(--purple);
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.2);
+    padding: 10px 20px; border-radius: 50px;
+    cursor: pointer; transition: all 0.2s; border: none;
+  }
+  .tool-open-btn:hover { background: rgba(139,92,246,0.2); transform: translateX(4px); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #0f0f1f;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px; max-width: 540px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s cubic-bezier(.22,.68,0,1.2);
+    position: relative;
+  }
+  .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; transition: all 0.2s;
+  }
+  .modal-close:hover { background: rgba(139,92,246,0.2); color: var(--text); }
+  .modal h3 {
+    font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;
+  }
+  .modal .modal-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
+
+  /* TOOL STYLES */
+  .habit-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 18px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
+    user-select: none;
+  }
+  .habit-item:hover { border-color: var(--purple); background: rgba(139,92,246,0.07); }
+  .habit-item.done { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.1); }
+  .habit-check {
+    width: 24px; height: 24px; border-radius: 8px;
+    border: 2px solid var(--border); display: flex;
+    align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .habit-item.done .habit-check { background: var(--grad); border-color: transparent; }
+  .habit-check::after { content: '✓'; color: #fff; font-size: 0.75rem; opacity: 0; }
+  .habit-item.done .habit-check::after { opacity: 1; }
+  .progress-bar-wrap { margin: 20px 0; }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: var(--muted); }
+  .progress-bar { height: 8px; background: rgba(255,255,255,0.06); border-radius: 50px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--grad); border-radius: 50px; transition: width 0.5s cubic-bezier(.22,.68,0,1.2); }
+
+  .timer-modes { display: flex; gap: 8px; margin-bottom: 24px; }
+  .timer-mode-btn {
+    flex: 1; padding: 10px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-family: 'Syne', sans-serif;
+    font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
+  }
+  .timer-mode-btn.active { background: rgba(139,92,246,0.2); border-color: var(--purple); color: var(--text); }
+  .timer-display {
+    text-align: center; padding: 40px 0;
+    font-family: 'Syne', sans-serif; font-size: 4rem;
+    font-weight: 800; background: var(--grad);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .timer-controls { display: flex; gap: 12px; justify-content: center; }
+  .btn-tool {
+    padding: 12px 28px; border-radius: 50px;
+    background: var(--grad); color: #fff;
+    border: none; font-family: 'Syne', sans-serif;
+    font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 0.9rem;
+  }
+  .btn-tool:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+  .btn-tool.secondary {
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-tool.secondary:hover { border-color: var(--purple); }
+
+  .glow-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .glow-field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+  .glow-field input, .glow-field select {
+    width: 100%; padding: 12px 16px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .glow-field input:focus, .glow-field select:focus { border-color: var(--purple); }
+  .water-counter { text-align: center; padding: 20px 0; }
+  .water-count { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: var(--cyan); }
+  .water-label { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+  .btn-water {
+    padding: 14px 32px; border-radius: 50px;
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    border: none; color: #fff; font-family: 'Syne', sans-serif;
+    font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 1rem;
+  }
+  .btn-water:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(6,182,212,0.3); }
+  .slider-wrap { margin: 20px 0; }
+  .slider-wrap label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+  input[type=range] { width: 100%; accent-color: var(--purple); cursor: pointer; }
+
+  /* POMODORO */
+  .pomo-circle-wrap { display: flex; justify-content: center; margin: 20px 0; }
+  .pomo-svg { width: 180px; height: 180px; transform: rotate(-90deg); }
+  .pomo-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
+  .pomo-fill { fill: none; stroke: url(#pomoGrad); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+  .pomo-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800;
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .pomo-wrap { position: relative; display: inline-block; }
+  .pomo-phase { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+
+  /* CONFIDENCE */
+  .quote-card {
+    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 16px; padding: 28px;
+    text-align: center; min-height: 120px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+  }
+  .quote-text {
+    font-size: 1.05rem; font-style: italic;
+    line-height: 1.6; color: var(--text);
+    transition: opacity 0.3s;
+  }
+
+  /* CHALLENGE */
+  .challenge-card {
+    background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.2);
+    border-radius: 16px; padding: 28px; text-align: center;
+    min-height: 100px; display: flex; align-items: center;
+    justify-content: center; margin-bottom: 24px;
+  }
+  .challenge-text { font-size: 1.05rem; line-height: 1.6; transition: opacity 0.3s; }
+  .btn-challenge {
+    width: 100%; padding: 14px; border-radius: 50px;
+    background: var(--grad2); border: none; color: #fff;
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    cursor: pointer; transition: all 0.3s; font-size: 1rem;
+  }
+  .btn-challenge:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(236,72,153,0.3); }
+
+  /* BENEFITS */
+  #benefits { padding: 100px 40px; }
+  .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
+  .benefit-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 36px 28px; text-align: center;
+    backdrop-filter: blur(20px); transition: all 0.3s;
+  }
+  .benefit-card:hover { border-color: var(--border-hover); transform: translateY(-6px); }
+  .benefit-icon { font-size: 2.4rem; margin-bottom: 20px; }
+  .benefit-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+  .benefit-card p { color: var(--muted); font-size: 0.9rem; }
+
+  /* STATS */
+  #progress { padding: 80px 40px; background: rgba(139,92,246,0.03); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; max-width: 800px; margin: 0 auto; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; text-align: center;
+    backdrop-filter: blur(20px);
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800;
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .stat-label { color: var(--muted); font-size: 0.85rem; margin-top: 8px; }
+
+  /* MOTIVATION BANNER */
+  #motivation {
+    padding: 80px 40px; text-align: center;
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.15));
+    border-top: 1px solid rgba(139,92,246,0.2);
+    border-bottom: 1px solid rgba(59,130,246,0.2);
+    position: relative; overflow: hidden;
+  }
+  #motivation::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.15) 0%, transparent 70%);
+  }
+  #motivation h2 {
+    font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800;
+    position: relative; z-index: 1;
+  }
+  #motivation h2 span {
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 60px 40px 40px; border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.3);
+  }
+  .footer-inner { max-width: 1100px; margin: 0 auto; }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 40px; margin-bottom: 48px; }
+  .footer-brand .logo-text {
+    font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;
+  }
+  .footer-brand p { color: var(--muted); font-size: 0.9rem; max-width: 260px; }
+  .footer-links h4 { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+  .footer-links ul { list-style: none; }
+  .footer-links li { margin-bottom: 10px; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+  .footer-bottom { text-align: center; color: var(--muted); font-size: 0.8rem; padding-top: 24px; border-top: 1px solid var(--border); }
+
+  /* SCROLL ANIMATION */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RIPPLE */
+  .ripple-btn { position: relative; overflow: hidden; }
+  .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); animation: ripple-anim 0.6s linear; pointer-events: none; }
+  @keyframes ripple-anim { from { width:0;height:0;opacity:1;transform:translate(-50%,-50%); } to { width:200px;height:200px;opacity:0;transform:translate(-50%,-50%); } }
+
+  /* DONE MESSAGE */
+  .done-msg {
+    text-align: center; padding: 20px;
+    background: rgba(139,92,246,0.1); border-radius: 14px;
+    border: 1px solid rgba(139,92,246,0.3); margin-top: 16px;
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    display: none;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    #tools, #benefits, #progress, footer { padding-left: 24px; padding-right: 24px; }
+    .tools-grid { grid-template-columns: 1fr; }
+    .glow-row { grid-template-columns: 1fr; }
+    .footer-top { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚡ Life Upgrade Hub</div>
+  <ul class="nav-links">
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#benefits">Benefits</a></li>
+    <li><a href="#progress">Progress</a></li>
+  </ul>
+  <a href="#tools" class="nav-cta">Start Free</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span> 6 Powerful Tools • No Account Needed</div>
+    <h1>Upgrade Your Life.<br><span>One Tool at a Time.</span></h1>
+    <p>A powerful all-in-one platform to boost discipline, focus, confidence, and productivity — right in your browser.</p>
+    <div class="hero-btns">
+      <a href="#tools" class="btn-primary ripple-btn">⚡ Start Upgrading</a>
+      <a href="#tools" class="btn-secondary">Explore Tools →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="section-header reveal">
+    <span class="section-label">🛠 The Toolkit</span>
+    <h2>Tools Built to Level You Up</h2>
+    <p>Click any tool to open it instantly. All data saved locally on your device.</p>
+  </div>
+  <div class="tools-grid">
+    <div class="tool-card reveal" onclick="openModal('discipline')">
+      <div class="tool-icon" style="background:rgba(139,92,246,0.15);">🎯</div>
+      <h3>Discipline Tracker</h3>
+      <p>Track your daily habits, stay consistent, and watch your discipline streak grow over time.</p>
+      <button class="tool-open-btn">Open Tool →</button>
+    </div>
+    <div class="tool-card reveal" onclick="openModal('detox')">
+      <div class="tool-icon" style="background:rgba(59,130,246,0.15);">🧘</div>
+      <h3>Dopamine Detox Timer</h3>
+      <p>Step away from distractions. Set a focused session and reclaim control of your attention.</p>
+      <button class="tool-open-btn">Open Tool →</button>
+    </div>
+    <div class="tool-card reveal" onclick="openModal('glowup')">
+      <div class="tool-icon" style="background:rgba(6,182,212,0.15);">✨</div>
+      <h3>Glow Up Tracker</h3>
+      <p>Track hydration, sleep quality, and daily confidence to build your ultimate glow-up routine.</p>
+      <button class="tool-open-btn">Open Tool →</button>
+    </div>
+    <div class="tool-card reveal" onclick="openModal('pomodoro')">
+      <div class="tool-icon" style="background:rgba(249,115,22,0.15);">🍅</div>
+      <h3>Pomodoro Timer</h3>
+      <p>Work in focused 25-minute sprints with 5-minute breaks to maximize deep focus and output.</p>
+      <button class="tool-open-btn">Open Tool →</button>
+    </div>
+    <div class="tool-card reveal" onclick="openModal('confidence')">
+      <div class="tool-icon" style="background:rgba(236,72,153,0.15);">💪</div>
+      <h3>Confidence Booster</h3>
+      <p>Get an instant dose of powerful mindset quotes curated to rewire your inner dialogue.</p>
+      <button class="tool-open-btn">Open Tool →</button>
+    </div>
+    <div class="tool-card reveal" onclick="openModal('challenge')">
+      <div class="tool-icon" style="background:rgba(16,185,129,0.15);">🎲</div>
+      <h3>Social Challenge Generator</h3>
+      <p>Push your comfort zone with daily micro-challenges designed to build social confidence.</p>
+      <button class="tool-open-btn">Open Tool →</button>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section id="benefits">
+  <div class="section-header reveal">
+    <span class="section-label">💡 Why It Works</span>
+    <h2>Engineered for Real Change</h2>
+    <p>Every tool is designed around behavioral science and real self-improvement principles.</p>
+  </div>
+  <div class="benefits-grid">
+    <div class="benefit-card reveal">
+      <div class="benefit-icon">🔥</div>
+      <h3>Build Discipline</h3>
+      <p>Consistent daily tracking creates neural pathways. Our tools make showing up non-negotiable.</p>
+    </div>
+    <div class="benefit-card reveal">
+      <div class="benefit-icon">🧠</div>
+      <h3>Improve Confidence</h3>
+      <p>Small wins compound. Each completed habit and social challenge rewires your self-belief.</p>
+    </div>
+    <div class="benefit-card reveal">
+      <div class="benefit-icon">🌐</div>
+      <h3>Take Control of Your Life</h3>
+      <p>No ads, no algorithms, no distractions. Just you, your goals, and tools that actually work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="progress">
+  <div class="section-header reveal">
+    <span class="section-label">📊 Your Progress</span>
+    <h2>See How Far You've Come</h2>
+    <p>Stats pulled from your saved data — updated every time you use a tool.</p>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card reveal">
+      <div class="stat-num" id="stat-habits">0</div>
+      <div class="stat-label">Habits Completed</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-num" id="stat-focus">0</div>
+      <div class="stat-label">Focus Minutes</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-num" id="stat-water">0</div>
+      <div class="stat-label">Glasses of Water</div>
+    </div>
+  </div>
+</section>
+
+<!-- MOTIVATION -->
+<section id="motivation" class="reveal">
+  <h2>"Your future is built by<br><span>what you do today."</span></h2>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo-text">⚡ Life Upgrade Hub</div>
+        <p>Your all-in-one self-improvement toolkit. Free forever. No account. No fluff.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="#tools">Tools</a></li>
+          <li><a href="#benefits">Benefits</a></li>
+          <li><a href="#progress">Progress</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Info</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Future Updates</a></li>
+          <li><a href="#">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Life Upgrade Hub — Built to upgrade your life, one day at a time. 🚀
+    </div>
+  </div>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- MODAL TEMPLATES -->
+<script>
+const HABITS = ['📚 Study / Read', '💪 Workout', '📵 No Social Media', '🌅 Wake Early', '🧘 Meditate', '🥗 Eat Healthy'];
+const QUOTES = [
+  "You are exactly who you decide to be. Start deciding better.",
+  "Discipline is just choosing between what you want now and what you want most.",
+  "The version of you that you're afraid to become is the one that wins.",
+  "Nobody is coming to save you. Get up and save yourself.",
+  "Confidence is not 'they will like me'. It's 'I'll be fine if they don't'.",
+  "Your comfort zone is a beautiful place but nothing ever grows there.",
+  "Stop being afraid of what could go wrong and think of what could go right.",
+  "You don't have to be great to start, but you have to start to be great.",
+  "Every expert was once a beginner. Keep going.",
+  "Your potential is limitless. Your excuses are not."
+];
+const CHALLENGES = [
+  "Compliment a stranger or someone you rarely talk to. Genuinely.",
+  "Put your phone in another room for 1 full hour. Go do something real.",
+  "Start a conversation with someone new today — online or in person.",
+  "Go 24 hours without scrolling social media. Not one peek.",
+  "Stand in front of a mirror and say 3 things you love about yourself.",
+  "Text an old friend you haven't spoken to in over 6 months.",
+  "Do something that scares you slightly. Small steps are still steps.",
+  "Go to a coffee shop, sit alone, and order without overthinking.",
+  "Make eye contact and smile at 5 different people today.",
+  "Write a handwritten note to someone who made a difference in your life.",
+  "Spend 30 minutes doing absolutely nothing — no phone, no music. Just breathe.",
+  "Sign up for something you've been putting off for months."
+];
+
+const TOOL_HTML = {
+  discipline: `
+    <div class="modal-close" onclick="closeModalBtn()">✕</div>
+    <h3>🎯 Discipline Tracker</h3>
+    <p class="modal-sub">Check off your habits for today. Your progress is saved automatically.</p>
+    <div id="habit-list"></div>
+    <div class="progress-bar-wrap">
+      <div class="progress-label"><span>Daily Progress</span><span id="habit-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="habit-bar" style="width:0%"></div></div>
+    </div>
+    <div class="done-msg" id="habit-done">🔥 All habits crushed! You're unstoppable today.</div>
+  `,
+  detox: `
+    <div class="modal-close" onclick="closeModalBtn()">✕</div>
+    <h3>🧘 Dopamine Detox Timer</h3>
+    <p class="modal-sub">Choose your detox session length and step away from the noise.</p>
+    <div class="timer-modes">
+      <button class="timer-mode-btn active" onclick="setDetoxMode(30, this)">30 min</button>
+      <button class="timer-mode-btn" onclick="setDetoxMode(60, this)">60 min</button>
+      <button class="timer-mode-btn" onclick="setDetoxMode(90, this)">90 min</button>
+    </div>
+    <div class="timer-display" id="detox-display">30:00</div>
+    <div class="timer-controls">
+      <button class="btn-tool ripple-btn" onclick="toggleDetox()">▶ Start</button>
+      <button class="btn-tool secondary ripple-btn" onclick="resetDetox()">↺ Reset</button>
+    </div>
+    <div class="done-msg" id="detox-done">🎉 Incredible! You reclaimed your focus. Your brain thanks you.</div>
+  `,
+  glowup: `
+    <div class="modal-close" onclick="closeModalBtn()">✕</div>
+    <h3>✨ Glow Up Tracker</h3>
+    <p class="modal-sub">Track your daily wellness metrics and build your glow-up habit.</p>
+    <div class="water-counter">
+      <div class="water-count" id="water-count">0</div>
+      <div class="water-label">💧 Glasses of water today</div>
+      <button class="btn-water ripple-btn" onclick="addWater()">+ Add Glass</button>
+    </div>
+    <div class="glow-row">
+      <div class="glow-field">
+        <label>🌙 Sleep Hours</label>
+        <input type="number" id="sleep-input" min="0" max="24" step="0.5" placeholder="7.5" oninput="saveGlowUp()">
+      </div>
+      <div class="glow-field">
+        <label>📅 Date</label>
+        <input type="date" id="glowup-date" oninput="saveGlowUp()">
+      </div>
+    </div>
+    <div class="slider-wrap">
+      <label>😎 Confidence Level: <span id="conf-val">5</span>/10</label>
+      <input type="range" min="1" max="10" value="5" id="conf-slider" oninput="updateConf(this.value)">
+    </div>
+  `,
+  pomodoro: `
+    <div class="modal-close" onclick="closeModalBtn()">✕</div>
+    <h3>🍅 Pomodoro Timer</h3>
+    <p class="modal-sub">25 minutes of deep work, 5 minutes of rest. Repeat to conquer.</p>
+    <div class="pomo-phase" id="pomo-phase">Focus Session</div>
+    <div class="pomo-circle-wrap">
+      <div class="pomo-wrap">
+        <svg class="pomo-svg" viewBox="0 0 120 120">
+          <defs>
+            <linearGradient id="pomoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#8b5cf6"/>
+              <stop offset="100%" style="stop-color:#3b82f6"/>
+            </linearGradient>
+          </defs>
+          <circle class="pomo-track" cx="60" cy="60" r="52"/>
+          <circle class="pomo-fill" id="pomo-ring" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/>
+        </svg>
+        <div class="pomo-center" id="pomo-display">25:00</div>
+      </div>
+    </div>
+    <div class="timer-controls">
+      <button class="btn-tool ripple-btn" onclick="togglePomo()">▶ Start</button>
+      <button class="btn-tool secondary ripple-btn" onclick="resetPomo()">↺ Reset</button>
+    </div>
+    <div class="done-msg" id="pomo-done">✅ Session complete! Take a 5-minute break. You earned it.</div>
+  `,
+  confidence: `
+    <div class="modal-close" onclick="closeModalBtn()">✕</div>
+    <h3>💪 Confidence Booster</h3>
+    <p class="modal-sub">Hit the button. Get a hit of real mindset fuel.</p>
+    <div class="quote-card">
+      <div class="quote-text" id="quote-text">Press the button to get your first boost ⚡</div>
+    </div>
+    <button class="btn-tool ripple-btn" style="width:100%" onclick="boostConfidence()">⚡ Boost Me</button>
+  `,
+  challenge: `
+    <div class="modal-close" onclick="closeModalBtn()">✕</div>
+    <h3>🎲 Social Challenge Generator</h3>
+    <p class="modal-sub">Get a random challenge to expand your comfort zone today.</p>
+    <div class="challenge-card">
+      <div class="challenge-text" id="challenge-text">Ready to level up your social game? Generate your first challenge.</div>
+    </div>
+    <button class="btn-challenge ripple-btn" onclick="generateChallenge()">🎲 Generate Challenge</button>
+  `
+};
+
+// TOOL STATE
+let detoxTime = 30 * 60, detoxRemaining = 30 * 60, detoxRunning = false, detoxInterval = null;
+let pomoWork = 25 * 60, pomoBreak = 5 * 60, pomoRemaining = 25 * 60, pomoRunning = false, pomoInterval = null, pomoIsBreak = false;
+
+function openModal(tool) {
+  const overlay = document.getElementById('modal-overlay');
+  const content = document.getElementById('modal-content');
+  content.innerHTML = TOOL_HTML[tool];
+  content.dataset.tool = tool;
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  initTool(tool);
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    _close();
+  }
+}
+function closeModalBtn() { _close(); }
+function _close() {
+  document.getElementById('modal-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+  clearInterval(detoxInterval); detoxRunning = false;
+  clearInterval(pomoInterval); pomoRunning = false;
+}
+
+function initTool(tool) {
+  if (tool === 'discipline') initDiscipline();
+  if (tool === 'detox') initDetox();
+  if (tool === 'glowup') initGlowUp();
+  if (tool === 'pomodoro') initPomo();
+}
+
+// DISCIPLINE
+function initDiscipline() {
+  const today = new Date().toDateString();
+  const saved = JSON.parse(localStorage.getItem('luh_habits_' + today) || '{}');
+  const list = document.getElementById('habit-list');
+  list.innerHTML = '';
+  HABITS.forEach((h, i) => {
+    const done = saved[i] || false;
+    const div = document.createElement('div');
+    div.className = 'habit-item' + (done ? ' done' : '');
+    div.innerHTML = `<div class="habit-check"></div><span>${h}</span>`;
+    div.onclick = () => toggleHabit(i, div);
+    list.appendChild(div);
+  });
+  updateHabitProgress();
+}
+function toggleHabit(idx, el) {
+  const today = new Date().toDateString();
+  const saved = JSON.parse(localStorage.getItem('luh_habits_' + today) || '{}');
+  saved[idx] = !saved[idx];
+  localStorage.setItem('luh_habits_' + today, JSON.stringify(saved));
+  el.classList.toggle('done', saved[idx]);
+  updateHabitProgress();
+  updateStats();
+}
+function updateHabitProgress() {
+  const today = new Date().toDateString();
+  const saved = JSON.parse(localStorage.getItem('luh_habits_' + today) || '{}');
+  const done = Object.values(saved).filter(Boolean).length;
+  const pct = Math.round((done / HABITS.length) * 100);
+  const bar = document.getElementById('habit-bar');
+  const pctEl = document.getElementById('habit-pct');
+  if (bar) { bar.style.width = pct + '%'; }
+  if (pctEl) { pctEl.textContent = pct + '%'; }
+  const msg = document.getElementById('habit-done');
+  if (msg) { msg.style.display = (done === HABITS.length) ? 'block' : 'none'; }
+}
+
+// DETOX TIMER
+function initDetox() {
+  detoxRemaining = 30 * 60; detoxTime = 30 * 60; detoxRunning = false;
+  updateDetoxDisplay();
+}
+function setDetoxMode(mins, btn) {
+  clearInterval(detoxInterval); detoxRunning = false;
+  detoxTime = mins * 60; detoxRemaining = mins * 60;
+  document.querySelectorAll('.timer-mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateDetoxDisplay();
+  const startBtn = document.querySelector('.modal .btn-tool');
+  if (startBtn) startBtn.textContent = '▶ Start';
+  const msg = document.getElementById('detox-done');
+  if (msg) msg.style.display = 'none';
+}
+function updateDetoxDisplay() {
+  const el = document.getElementById('detox-display');
+  if (!el) return;
+  const m = Math.floor(detoxRemaining / 60), s = detoxRemaining % 60;
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function toggleDetox() {
+  if (detoxRunning) {
+    clearInterval(detoxInterval); detoxRunning = false;
+    document.querySelector('.modal .btn-tool').textContent = '▶ Resume';
+  } else {
+    detoxRunning = true;
+    document.querySelector('.modal .btn-tool').textContent = '⏸ Pause';
+    detoxInterval = setInterval(() => {
+      detoxRemaining--;
+      updateDetoxDisplay();
+      if (detoxRemaining <= 0) {
+        clearInterval(detoxInterval); detoxRunning = false;
+        const m = document.getElementById('detox-done');
+        if (m) m.style.display = 'block';
+        // save focus minutes
+        const focusMins = parseInt(localStorage.getItem('luh_focus') || '0');
+        localStorage.setItem('luh_focus', focusMins + Math.round(detoxTime / 60));
+        updateStats();
+      }
+    }, 1000);
+  }
+}
+function resetDetox() {
+  clearInterval(detoxInterval); detoxRunning = false;
+  detoxRemaining = detoxTime;
+  updateDetoxDisplay();
+  const btn = document.querySelector('.modal .btn-tool');
+  if (btn) btn.textContent = '▶ Start';
+  const msg = document.getElementById('detox-done');
+  if (msg) msg.style.display = 'none';
+}
+
+// GLOW UP
+function initGlowUp() {
+  const d = new Date().toISOString().split('T')[0];
+  const water = parseInt(localStorage.getItem('luh_water_' + d) || '0');
+  const el = document.getElementById('water-count');
+  if (el) el.textContent = water;
+  const dateEl = document.getElementById('glowup-date');
+  if (dateEl) dateEl.value = d;
+  const saved = JSON.parse(localStorage.getItem('luh_glowup_' + d) || '{}');
+  if (saved.sleep) { const sl = document.getElementById('sleep-input'); if(sl) sl.value = saved.sleep; }
+  if (saved.conf) {
+    const sl = document.getElementById('conf-slider'); if(sl) sl.value = saved.conf;
+    const cv = document.getElementById('conf-val'); if(cv) cv.textContent = saved.conf;
+  }
+}
+function addWater() {
+  const d = new Date().toISOString().split('T')[0];
+  const water = parseInt(localStorage.getItem('luh_water_' + d) || '0') + 1;
+  localStorage.setItem('luh_water_' + d, water);
+  const el = document.getElementById('water-count');
+  if (el) { el.textContent = water; el.style.transform = 'scale(1.3)'; setTimeout(()=>el.style.transform='',300); }
+  updateStats();
+}
+function saveGlowUp() {
+  const d = new Date().toISOString().split('T')[0];
+  const sleep = document.getElementById('sleep-input')?.value;
+  const conf = document.getElementById('conf-slider')?.value;
+  localStorage.setItem('luh_glowup_' + d, JSON.stringify({ sleep, conf }));
+}
+function updateConf(val) {
+  const el = document.getElementById('conf-val');
+  if (el) el.textContent = val;
+  saveGlowUp();
+}
+
+// POMODORO
+function initPomo() {
+  pomoRemaining = pomoWork; pomoIsBreak = false; pomoRunning = false;
+  updatePomoDisplay();
+}
+function updatePomoDisplay() {
+  const m = Math.floor(pomoRemaining / 60), s = pomoRemaining % 60;
+  const el = document.getElementById('pomo-display');
+  if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const total = pomoIsBreak ? pomoBreak : pomoWork;
+  const pct = 1 - (pomoRemaining / total);
+  const circ = 326.7;
+  const ring = document.getElementById('pomo-ring');
+  if (ring) ring.style.strokeDashoffset = circ * (1 - pct);
+}
+function togglePomo() {
+  if (pomoRunning) {
+    clearInterval(pomoInterval); pomoRunning = false;
+    document.querySelector('.modal .btn-tool').textContent = '▶ Resume';
+  } else {
+    pomoRunning = true;
+    document.querySelector('.modal .btn-tool').textContent = '⏸ Pause';
+    pomoInterval = setInterval(() => {
+      pomoRemaining--;
+      updatePomoDisplay();
+      if (pomoRemaining <= 0) {
+        clearInterval(pomoInterval); pomoRunning = false;
+        if (!pomoIsBreak) {
+          const focus = parseInt(localStorage.getItem('luh_focus') || '0');
+          localStorage.setItem('luh_focus', focus + 25);
+          updateStats();
+          const msg = document.getElementById('pomo-done');
+          if (msg) { msg.style.display = 'block'; msg.textContent = '✅ Focus session done! Take a 5-minute break.'; }
+          setTimeout(() => {
+            pomoIsBreak = true; pomoRemaining = pomoBreak;
+            const ph = document.getElementById('pomo-phase');
+            if (ph) ph.textContent = 'Break Time ☕';
+            const m = document.getElementById('pomo-done');
+            if (m) m.style.display = 'none';
+            updatePomoDisplay();
+          }, 3000);
+        } else {
+          pomoIsBreak = false; pomoRemaining = pomoWork;
+          const ph = document.getElementById('pomo-phase');
+          if (ph) ph.textContent = 'Focus Session';
+          updatePomoDisplay();
+        }
+      }
+    }, 1000);
+  }
+}
+function resetPomo() {
+  clearInterval(pomoInterval); pomoRunning = false;
+  pomoIsBreak = false; pomoRemaining = pomoWork;
+  updatePomoDisplay();
+  const btn = document.querySelector('.modal .btn-tool');
+  if (btn) btn.textContent = '▶ Start';
+  const ph = document.getElementById('pomo-phase');
+  if (ph) ph.textContent = 'Focus Session';
+  const msg = document.getElementById('pomo-done');
+  if (msg) msg.style.display = 'none';
+}
+
+// CONFIDENCE
+function boostConfidence() {
+  const el = document.getElementById('quote-text');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = '"' + QUOTES[Math.floor(Math.random() * QUOTES.length)] + '"';
+    el.style.opacity = '1';
+  }, 200);
+  el.style.transition = 'opacity 0.3s';
+}
+
+// CHALLENGE
+function generateChallenge() {
+  const el = document.getElementById('challenge-text');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
+    el.style.opacity = '1';
+  }, 200);
+  el.style.transition = 'opacity 0.3s';
+}
+
+// STATS
+function updateStats() {
+  const today = new Date().toDateString();
+  const d = new Date().toISOString().split('T')[0];
+  const habits = JSON.parse(localStorage.getItem('luh_habits_' + today) || '{}');
+  const habitCount = Object.values(habits).filter(Boolean).length;
+  const focus = parseInt(localStorage.getItem('luh_focus') || '0');
+  const water = parseInt(localStorage.getItem('luh_water_' + d) || '0');
+  animateCounter('stat-habits', habitCount);
+  animateCounter('stat-focus', focus);
+  animateCounter('stat-water', water);
+}
+function animateCounter(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = parseInt(el.textContent) || 0;
+  const diff = target - start;
+  const steps = 30;
+  let step = 0;
+  const interval = setInterval(() => {
+    step++;
+    el.textContent = Math.round(start + (diff * step / steps));
+    if (step >= steps) { clearInterval(interval); el.textContent = target; }
+  }, 20);
+}
+
+// SCROLL REVEAL
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// RIPPLE
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.ripple-btn');
+  if (!btn) return;
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  r.style.left = (e.clientX - rect.left) + 'px';
+  r.style.top = (e.clientY - rect.top) + 'px';
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+});
+
+// PARTICLES
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  function resize() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * innerWidth,
+      y: Math.random() * innerHeight,
+      r: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: (Math.random() - 0.5) * 0.3,
+      o: Math.random() * 0.4 + 0.1
+    });
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(139,92,246,${p.o})`;
+      ctx.fill();
+      p.x += p.dx; p.y += p.dy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// PARALLAX
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  document.querySelector('.orb-1').style.transform = `translateY(${y * 0.15}px)`;
+  document.querySelector('.orb-2').style.transform = `translateY(${-y * 0.1}px)`;
+});
+
+// INIT STATS ON LOAD
+window.addEventListener('load', () => {
+  setTimeout(updateStats, 500);
+});
+</script>
+</body>
+</html>
